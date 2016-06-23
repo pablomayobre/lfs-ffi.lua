@@ -98,7 +98,7 @@ if os == "windows" then
 
 		local cfile = ffi.new("struct _finddata32_t")
 
-		if dir.hFile == 0 then --First entry
+		if dir.hFile == nil then --First entry
 			dir.hFile = ffi.C._findfirst32(dir.pattern, cfile)
 
 			if dir.hFile == -1 then
@@ -107,9 +107,9 @@ if os == "windows" then
 				return ffi.string(cfile.name)
 			end
 		else
-			dir.hFile = ffi.C._findnext32(dir.hFile, cfile)
+			local ret = ffi.C._findnext32(dir.hFile, cfile)
 
-			if dir.hFile == -1 then
+			if ret == -1 then
 				ffi.C._findclose(dir.hFile)
 				dir.closed = true
 
@@ -145,7 +145,7 @@ if os == "windows" then
 			path	= path,
 			pattern	= path .. "/*",
 			closed	= false,
-			hFile	= 0,
+			hFile	= nil,
 		}, dirmeta)
 
 		return iterator, dir, nil
